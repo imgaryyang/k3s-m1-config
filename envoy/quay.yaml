@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quay
+  labels:
+    app: quay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quay
+  template:
+    metadata:
+      labels:
+        app: quay
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - quay
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      nodeSelector:
+        kubernetes.io/hostname: ubuntu20-hk01
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+          - 8.8.8.8
+          - 8.8.4.4
+      containers:
+      - name: quay
+        image: k8stech/registry-proxy:latest
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 10m
+            memory: 30Mi
+          requests:
+            cpu: 10m
+            memory: 30Mi
+        env:
+        - name: PROXY_REMOTE_URL
+          value: https://quay.io
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: localtime
+        - mountPath: /var/lib/registry
+          name: registry
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+      - name: registry
+        hostPath:
+          path: /var/lib/registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quay
+  labels:
+    app: quay
+spec:
+  selector:
+    app: quay
+  ports:
+    - protocol: TCP
+      name: http
+      port: 5000
+      targetPort: 5000

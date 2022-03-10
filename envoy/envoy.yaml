@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envoy
+  namespace: kube-system
+  labels:
+    app: envoy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: envoy
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: envoy
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: ubuntu20-hk01
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - name: envoy
+        image: envoyproxy/envoy:v1.17-latest
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 20m
+            memory: 50Mi
+          requests:
+            cpu: 20m
+            memory: 50Mi
+        command:
+        - envoy
+        - -c
+        - /etc/envoy/envoy.yaml
+        ports:
+        - containerPort: 4431
+          name: https
+        - containerPort: 801
+          name: http
+        - containerPort: 15001
+          name: http-metrics
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: localtime
+        - mountPath: /etc/envoy
+          name: envoy
+        - mountPath: /root/.acme.sh/unixsre.com
+          name: acme-ssl
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+      - name: envoy
+        hostPath:
+          path: /etc/envoy
+      - name: acme-ssl
+        secret:
+          secretName: "unixsre-com-tls"

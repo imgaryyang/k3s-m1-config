@@ -1,0 +1,136 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  annotations:
+    meta.helm.sh/release-name: rancher-webhook
+    meta.helm.sh/release-namespace: cattle-system
+    objectset.rio.cattle.io/applied: H4sIAAAAAAAA/+yVUU/bMBDHv8p0z4YmS6tBpD2MtkzrEIKW8ADqw8W5JF4dO7KdVKjqd5/cFMFYC0xiaA97S+58uf/97p9kBRU5zNAhxCtApbRDJ7Sy/lanP4g7S+7QCH3I0TlJh0L3RAYxANub10tF5qBoFxBDrw3Zh+9CZZ9nxA25F8sUVgQxdOGDJaWl1osDjq8qtDXyR9X2zjqqYM2AG9rMdSUqsg6rGmLVSMlAYkry2WlLtCXEEBDHAfJgcJSnlH/Ko/Q4Qkrz4wiP+iH2Bx+j40E6yH237QwGFS/JPDzL57YTWYhvV4BZJawVWk2pFbS8JmM7+LfQhsCgDVNyGMKcAZeClBtqlYvCy+V40qhM+j5ns8CdzcLhNMkmV+JkNL2eJLPkZnIZnCbTTS5ww0U4mSWTJS3OR5fXyd1NcBrNksnJTSCHwMCSaYVHt3oi/n4D0E21GzCDGl3Zbbu3Lei1KEW2ge7z2jiI+/1ovWaQo5CNoQstBb+DGL4VShuCZ7gxMI2kLbNafDW6qTeUKlRYUEXKPTo9Z/7QLzAjH9Q1mXt338JwOv5yNQYGycXIX8wZGLK6MXzTCLhsrCNjfcJyXXtlwy4Ga/Z2Ova0zwldY2h3ex8TGY3z3FsWYjjXijpV/x0FMZyikL/5CRtXvsZTtdGt8NSEKp7fZvg2rjq/x5C9qbGeSmEwGp+Nd2gqpE5RGi0pFSoTqvjrnn+JktfiqKoluj1vwDuKqY32f4bHmnZxeqct7jHUP6ruwVp/9CGbr38GAAD//6+3uhWZCAAA
+    objectset.rio.cattle.io/id: ""
+    objectset.rio.cattle.io/owner-gvk: /v1, Kind=Secret
+    objectset.rio.cattle.io/owner-name: cattle-webhook-ca
+    objectset.rio.cattle.io/owner-namespace: cattle-system
+  creationTimestamp: "2021-12-03T15:54:29Z"
+  generation: 2
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    objectset.rio.cattle.io/hash: 0eca5ac058fbef7f3b93aebf93a841a452395b5f
+  name: rancher.cattle.io
+  resourceVersion: "3821322"
+  uid: 66293802-6844-4abd-8057-2039c73d67f3
+webhooks:
+- admissionReviewVersions:
+  - v1
+  - v1beta1
+  clientConfig:
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJwekNDQVUyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQTdNUnd3R2dZRFZRUUtFeE5rZVc1aGJXbGoKYkdsemRHVnVaWEl0YjNKbk1Sc3dHUVlEVlFRREV4SmtlVzVoYldsamJHbHpkR1Z1WlhJdFkyRXdIaGNOTWpFeApNVEl5TURZMU9ERXpXaGNOTXpFeE1USXdNRFkxT0RFeldqQTdNUnd3R2dZRFZRUUtFeE5rZVc1aGJXbGpiR2x6CmRHVnVaWEl0YjNKbk1Sc3dHUVlEVlFRREV4SmtlVzVoYldsamJHbHpkR1Z1WlhJdFkyRXdXVEFUQmdjcWhrak8KUFFJQkJnZ3Foa2pPUFFNQkJ3TkNBQVNteGRZbEh3ak04cDJ4Q0FZdExEYk1udHROakxLeGtIZ3kzWkdjdFNIWgphbVEzME5TejFoVGFNSm9wb2RTS1lRWU4wMnBJUmlWU0RNUTNPbGxpYmxrNm8wSXdRREFPQmdOVkhROEJBZjhFCkJBTUNBcVF3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFkQmdOVkhRNEVGZ1FVOHI3ai95WVhsb2NqMjR4cE45ckUKRVhnQnhGSXdDZ1lJS29aSXpqMEVBd0lEU0FBd1JRSWhBUDJEU2tKbXhDdnlwcEh2TEp4MVFrbXY5SXd0a3BDWQp1TUYrcXVsVTBWaHJBaUFURExtSEpaR2lFZkpXMW1DTXNGemoyUzc5Q3NiYm1ab3ZLdXJUeHlCNWd3PT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    service:
+      name: rancher-webhook
+      namespace: cattle-system
+      path: /v1/webhook/validation
+      port: 443
+  failurePolicy: Ignore
+  matchPolicy: Equivalent
+  name: rancher.cattle.io
+  namespaceSelector: {}
+  objectSelector: {}
+  rules:
+  - apiGroups:
+    - management.cattle.io
+    apiVersions:
+    - v3
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clusters
+    scope: Cluster
+  - apiGroups:
+    - management.cattle.io
+    apiVersions:
+    - v3
+    operations:
+    - UPDATE
+    resources:
+    - features
+    scope: Cluster
+  sideEffects: None
+  timeoutSeconds: 10
+- admissionReviewVersions:
+  - v1
+  - v1beta1
+  clientConfig:
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJwekNDQVUyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQTdNUnd3R2dZRFZRUUtFeE5rZVc1aGJXbGoKYkdsemRHVnVaWEl0YjNKbk1Sc3dHUVlEVlFRREV4SmtlVzVoYldsamJHbHpkR1Z1WlhJdFkyRXdIaGNOTWpFeApNVEl5TURZMU9ERXpXaGNOTXpFeE1USXdNRFkxT0RFeldqQTdNUnd3R2dZRFZRUUtFeE5rZVc1aGJXbGpiR2x6CmRHVnVaWEl0YjNKbk1Sc3dHUVlEVlFRREV4SmtlVzVoYldsamJHbHpkR1Z1WlhJdFkyRXdXVEFUQmdjcWhrak8KUFFJQkJnZ3Foa2pPUFFNQkJ3TkNBQVNteGRZbEh3ak04cDJ4Q0FZdExEYk1udHROakxLeGtIZ3kzWkdjdFNIWgphbVEzME5TejFoVGFNSm9wb2RTS1lRWU4wMnBJUmlWU0RNUTNPbGxpYmxrNm8wSXdRREFPQmdOVkhROEJBZjhFCkJBTUNBcVF3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFkQmdOVkhRNEVGZ1FVOHI3ai95WVhsb2NqMjR4cE45ckUKRVhnQnhGSXdDZ1lJS29aSXpqMEVBd0lEU0FBd1JRSWhBUDJEU2tKbXhDdnlwcEh2TEp4MVFrbXY5SXd0a3BDWQp1TUYrcXVsVTBWaHJBaUFURExtSEpaR2lFZkpXMW1DTXNGemoyUzc5Q3NiYm1ab3ZLdXJUeHlCNWd3PT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    service:
+      name: rancher-webhook
+      namespace: cattle-system
+      path: /v1/webhook/validation
+      port: 443
+  failurePolicy: Fail
+  matchPolicy: Equivalent
+  name: rancherauth.cattle.io
+  namespaceSelector: {}
+  objectSelector: {}
+  rules:
+  - apiGroups:
+    - provisioning.cattle.io
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clusters
+    scope: Namespaced
+  - apiGroups:
+    - management.cattle.io
+    apiVersions:
+    - v3
+    operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+    resources:
+    - globalrolebindings
+    scope: Cluster
+  - apiGroups:
+    - management.cattle.io
+    apiVersions:
+    - v3
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - roletemplates
+    scope: Cluster
+  - apiGroups:
+    - management.cattle.io
+    apiVersions:
+    - v3
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - projectroletemplatebindings
+    scope: Namespaced
+  - apiGroups:
+    - management.cattle.io
+    apiVersions:
+    - v3
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clusterroletemplatebindings
+    scope: Namespaced
+  - apiGroups:
+    - management.cattle.io
+    apiVersions:
+    - v3
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - globalroles
+    scope: Cluster
+  sideEffects: None
+  timeoutSeconds: 10

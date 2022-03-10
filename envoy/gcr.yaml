@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gcr
+  labels:
+    app: gcr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gcr
+  template:
+    metadata:
+      labels:
+        app: gcr
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - gcr
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      nodeSelector:
+        kubernetes.io/hostname: ubuntu20-hk01
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+          - 8.8.8.8
+          - 8.8.4.4
+      containers:
+      - name: gcr
+        image: k8stech/registry-proxy:latest
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 20m
+            memory: 100Mi
+          requests:
+            cpu: 20m
+            memory: 100Mi
+        env:
+        - name: PROXY_REMOTE_URL
+          value: https://gcr.io
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: localtime
+        - mountPath: /var/lib/registry
+          name: registry
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+      - name: registry
+        hostPath:
+          path: /var/lib/registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gcr
+  labels:
+    app: gcr
+spec:
+  selector:
+    app: gcr
+  ports:
+    - protocol: TCP
+      name: http
+      port: 5000
+      targetPort: 5000

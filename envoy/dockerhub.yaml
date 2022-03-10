@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dockerhub
+  labels:
+    app: dockerhub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dockerhub
+  template:
+    metadata:
+      labels:
+        app: dockerhub
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - dockerhub
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      nodeSelector:
+        kubernetes.io/hostname: ubuntu20-hk01
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+          - 8.8.8.8
+          - 8.8.4.4
+      containers:
+      - name: dockerhub
+        image: k8stech/registry-proxy:latest
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 20m
+            memory: 50Mi
+          requests:
+            cpu: 20m
+            memory: 50Mi
+        env:
+        - name: PROXY_REMOTE_URL
+          value: https://registry-1.docker.io
+        #- name: PROXY_USERNAME
+        #  value: k8stech
+        #- name: PROXY_PASSWORD
+        #  value: iamyourfather
+        - name: REGISTRY_AUTH_HTPASSWD_REALM
+          value: Registry Realm
+        - name: REGISTRY_AUTH_HTPASSWD_PATH
+          value: /auth/htpasswd
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: localtime
+        - mountPath: /var/lib/registry
+          name: registry
+        - mountPath: /auth
+          name: auth
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+      - name: registry
+        hostPath:
+          path: /var/lib/registry
+      - name: auth
+        secret:
+          secretName: registry-auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dockerhub
+  labels:
+    app: dockerhub
+spec:
+  selector:
+    app: dockerhub
+  ports:
+    - protocol: TCP
+      name: http
+      port: 5000
+      targetPort: 5000

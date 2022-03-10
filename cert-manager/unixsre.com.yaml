@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: unixsre-tls
+spec:
+  secretName: unixsre-com-tls
+  commonName: unixsre.com
+  dnsNames:
+  - unixsre.com
+  - "*.unixsre.com"
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
